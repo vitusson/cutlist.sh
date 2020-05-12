@@ -116,7 +116,10 @@ if [ `echo "$auswahl" | grep / | wc -l` -eq 0 ] ; then
 	auswahl="$PWD/$auswahl"
 fi
 
-avidemux_project=$(echo "$auswahl" | sed 's/.avi$/.js/g' -)				# Variablen bestimmen
+avidemux_project=$(echo "$auswahl" | sed 's/.avi$/.py/g' -)				# Variablen bestimmen
+echo "projekt: .....<"
+echo $avidemux_project
+echo ">"
 cutlist=$(echo "$auswahl" | sed 's/.avi$/.cutlist/g' -)
 filesize=$(ls "$auswahl" -l | awk '{ print $5 }')
 file=$(echo "$auswahl" | rev | cut -d"/" -f1 | rev)
@@ -127,7 +130,7 @@ showInfoDialog $1
 
 $avidemux --nogui --force-smart --run "$avidemux_project" --save-workbench "$avidemux_project" 1>/dev/null 2>/dev/null
 
-number_of_cuts=`grep -c "app.addSegment" "$avidemux_project"`				# Wie viele Schnitte gibt es?
+number_of_cuts=`grep -c "adm.addSegment" "$avidemux_project"`				# Wie viele Schnitte gibt es?
 if [ $number_of_cuts -eq 0 ] ; then							# Abbruch bei Null Schnitte
 	printf "$c_rot Du hast in Avidemux keine Schnitte definiert,            $c_normal\n"
 	printf "$c_rot oder vergessen diese zu speichern (File -> Save Project) $c_normal\n"
@@ -215,7 +218,7 @@ if [ $merged -ne 0 ] ; then
 fi
 
 offSet="0"
-cuts=`grep "app.addSegment(0" "$avidemux_project"`
+cuts=`grep "adm.addSegment(0" "$avidemux_project"`
 count=0											# fuer die Cutlist
 for cut in $cuts ; do									# und schreibe
 	writeCutlistSegment $count $cut "$cutlist"						# die endgueltige
@@ -227,7 +230,7 @@ if [ $merged -ne 0 ] ; then
 	mergedFiles=`grep "app.append" "$avidemux_project" | rev | cut -d"/" -f1 | rev | cut -d'"' -f1`
 	for mergeFile in "$mergedFiles" ; do
 		echo "$mergeFile"
-		cutstring="app.addSegment($merging"
+		cutstring="adm.addSegment($merging"
 		cuts=`grep $cutstring "$avidemux_project"`
 		for cut in $cuts ; do									# und schreibe
 			echo $cut
